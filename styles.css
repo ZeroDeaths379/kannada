@@ -1,75 +1,53 @@
 body {
-  font-family: system-ui;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #FFEEAD;
-  color: #A66E38;
-  margin: 0;
-  padding: 0;
-}
-
-.game-container {
-  text-align: center;
-  width: 95%;
-  max-width: 600px;
-  padding: 20px 10px;
-}
-
-.board, .inventory {
-  padding: 15px;
-  margin: 10px auto;
-}
-
-.board h2 {
-  margin-bottom: 20px;
-}
-
-#timer {
-  margin: 10px 0;
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-#english-slots, #kannada-letters {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-  gap: 10px;
-}
-
-.letter, .slot {
-  font-size: clamp(14px, 4vw, 18px);
-  height: 60px;
-  padding: 10px;
-  text-align: center;
-  cursor: pointer;
-  border: 1px solid #a66e38;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  background-color: #FFAD60;
-  border-radius: 12px;
-  transition: background-color 0.3s ease;
-}
-
-.letter.incorrect {
-  background-color: #a66e38 !important;
-}
-
-@media (max-width: 600px) {
-  .letter, .slot {
-    font-size: 16px;
-    height: 50px;
+    font-family: system-ui;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #FFEEAD;
+    color: #A66E38;
   }
-}
-
-@media (max-width: 400px) {
-  .letter, .slot {
-    font-size: 15px;
-    height: 50px;
-  }
-
   .game-container {
-    padding: 10px;
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
   }
-}
+  .board, .inventory {
+    padding: 15px;
+    margin: 10px auto;
+  }
+  .board h2 {
+    margin-bottom: 20px;
+  }
+  #english-slots, #kannada-letters {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 5px;
+  }
+  .letter, .slot {
+    font-size: 18px;
+    height: 30px;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #ffffff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background-color: #ffffff;    
+    border-radius: 12px;
+  }
+  .letter.incorrect {
+    background-color: #ffffff !important;
+  }
+  @media (max-width: 600px) {
+    .letter, .slot {
+      font-size: 16px;
+      height: 50px;
+    }
+  }
+  @media (max-width: 400px) {
+    .letter, .slot {
+      font-size: 14px;
+      height: 45px;
+    }
+  }
