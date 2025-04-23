@@ -29,15 +29,15 @@ body {
     padding: 5px;
     text-align: center;
     cursor: pointer;
-    border: 1px solid #ffffff;
+    border: 1px solid #a66e38;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    background-color: #ffffff;    
+    background-color: #FFAD60;    
     border-radius: 12px;
   }
   .letter.incorrect {
-    background-color: #ffffff !important;
+    background-color: #a66e38 !important;
   }
   @media (max-width: 600px) {
     .letter, .slot {
