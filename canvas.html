@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kannada to English Matching Game</title>
+    <style>
+        body {
+            font-family: system-ui;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #FFEEAD;
+            color: #A66E38;
+        }
+        canvas {
+            border: 2px solid #a66e38;
+            background-color: #FFE5B4;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        #timer {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Kannada to English Matching Game</h2>
+    <canvas id="gameCanvas" width="600" height="500"></canvas>
+    <div id="timer">Time: 0.0s</div>
+
+    <audio id="correct-sound" src="correct.mp3"></audio>
+    <audio id="incorrect-sound" src="incorrect.mp3"></audio>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const timerDisplay = document.getElementById("timer");
+
+        let timeElapsed = 0, timerStarted = false, timerInterval;
+
+        const kannadaToEnglish = {
+            "ಅ": "a", "ಆ": "aa", "ಇ": "i", "ಈ": "ii", "ಉ": "u",
+            "ಊ": "uu", "ಎ": "e", "ಏ": "ee", "ಐ": "ai", "ಒ": "o",
+            "ಓ": "oo", "ಔ": "au", "ಕ": "ka", "ಖ": "kha", "ಗ": "ga"
+        };
+
+        const letters = Object.keys(kannadaToEnglish).sort(() => 0.5 - Math.random());
+        const letterPositions = [];
+        const slotPositions = [];
+        const letterSize = 60;
+        let selectedLetter = null;
+        let offsetX = 0, offsetY = 0;
+
+        function startTimer() {
+            if (timerStarted) return;
+            timerStarted = true;
+            timerInterval = setInterval(() => {
+                timeElapsed += 100;
+                const seconds = Math.floor(timeElapsed / 1000);
+                const milliseconds = Math.floor((timeElapsed % 1000) / 100);
+                timerDisplay.textContent = `Time: ${seconds}.${milliseconds}s`;
+            }, 100);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerDisplay.textContent += " - Completed!";
+        }
+
+        function initGame() {
+            let yPos = 50;
+
+            Object.values(kannadaToEnglish).forEach((english, i) => {
+                const x = (i % 5) * (letterSize + 20) + 50;
+                const y = yPos + Math.floor(i / 5) * (letterSize + 20);
+                slotPositions.push({ x, y, letter: english, occupied: false });
+            });
+
+            yPos += 200;
+            letters.forEach((kannada, i) => {
+                const x = (i % 5) * (letterSize + 20) + 50;
+                const y = yPos + Math.floor(i / 5) * (letterSize + 20);
+                letterPositions.push({ x, y, letter: kannada, originalX: x, originalY: y });
+            });
+
+            drawGame();
+        }
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            slotPositions.forEach(({ x, y, letter, occupied }) => {
+                ctx.fillStyle = occupied ? "#a3d3a1" : "#FFFFFF";
+                ctx.fillRect(x, y, letterSize, letterSize);
+                ctx.strokeStyle = "#A66E38";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, letterSize, letterSize);
+                ctx.fillStyle = "#A66E38";
+                ctx.font = "20px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(letter, x + letterSize / 2, y + letterSize / 2);
+            });
+
+            letterPositions.forEach(({ x, y, letter }) => {
+                ctx.fillStyle = "#FFAD60";
+                ctx.fillRect(x, y, letterSize, letterSize);
+                ctx.strokeStyle = "#A66E38";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, letterSize, letterSize);
+                ctx.fillStyle = "#A66E38";
+                ctx.font = "20px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(letter, x + letterSize / 2, y + letterSize / 2);
+            });
+        }
+
+        canvas.addEventListener("mousedown", (e) => {
+            const x = e.offsetX;
+            const y = e.offsetY;
+            selectedLetter = letterPositions.find(
+                pos => x > pos.x && x < pos.x + letterSize && y > pos.y && y < pos.y + letterSize
+            );
+
+            if (selectedLetter) {
+                offsetX = x - selectedLetter.x;
+                offsetY = y - selectedLetter.y;
+                startTimer();
+                drawGame();
+            }
+        });
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (selectedLetter) {
+                selectedLetter.x = e.offsetX - offsetX;
+                selectedLetter.y = e.offsetY - offsetY;
+                drawGame();
+            }
+        });
+
+        canvas.addEventListener("mouseup", (e) => {
+            if (!selectedLetter) return;
+
+            const x = e.offsetX;
+            const y = e.offsetY;
+            const slot = slotPositions.find(
+                pos => x > pos.x && x < pos.x + letterSize && y > pos.y && y < pos.y + letterSize && !pos.occupied
+            );
+
+            const correctSound = document.getElementById("correct-sound");
+            const incorrectSound = document.getElementById("incorrect-sound");
+
+            if (slot && kannadaToEnglish[selectedLetter.letter] === slot.letter) {
+                slot.occupied = true;
+                correctSound.play();
+                letterPositions.splice(letterPositions.indexOf(selectedLetter), 1);
+
+                if (letterPositions.length === 0) stopTimer();
+            } else {
+                incorrectSound.play();
+                // Move the letter back to its original position if it was incorrect
+                selectedLetter.x = selectedLetter.originalX;
+                selectedLetter.y = selectedLetter.originalY;
+            }
+
+            selectedLetter = null;
+            drawGame();
+        });
+
+        initGame();
+    </script>
+</body>
+</html>
